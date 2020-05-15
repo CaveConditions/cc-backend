@@ -75,7 +75,7 @@ func serve() {
 	// start a server with listen address
 	service.Start(&wg)
 
-	log.Info("server is started")
+	log.Infof("server is listening at -> %s", settings.Server.ListenAddr)
 
 	sig := make(chan os.Signal, 1024)
 	// subscribe signals: SIGINT & SINGTERM

@@ -17,10 +17,15 @@ func init() {
 	AddCaveCmd.PersistentFlags().StringVar(&regionName, "region", "Florida", "The region name of cave")
 	AddCaveCmd.PersistentFlags().Float32Var(&longitude, "lng", -84.34147, "The longitude of cave")
 	AddCaveCmd.PersistentFlags().Float32Var(&latitude, "lat", 30.28608, "The latitude of cave")
+
+	// command parameters for GetCave subcommand
+	GetCaveCmd.PersistentFlags().StringVar(&address, "address", "localhost:8000", "CaveConditions server's address")
+	GetCaveCmd.PersistentFlags().StringVar(&title, "title", "Leon Sinks", "The title of cave")
 }
 
 func init() {
 	RootCmd.AddCommand(AddCaveCmd)
+	RootCmd.AddCommand(GetCaveCmd)
 }
 
 // new a grpc client with address
@@ -62,5 +67,30 @@ var AddCaveCmd = &cobra.Command{
 			return
 		}
 		fmt.Println("Add a new cave entity success")
+	},
+}
+
+// GetCaveCmd subcommand
+var GetCaveCmd = &cobra.Command{
+	Use:   "GetCave",
+	Short: "Get a special cave entity",
+	Run: func(cmd *cobra.Command, args []string) {
+		// create the grpc client
+		client, err := newClient(address)
+		if err != nil {
+			fmt.Printf("New client: %v\n", err)
+			return
+		}
+
+		request := &api.GetCaveRequest{
+			Title: title,
+		}
+		// call the GetCave interface
+		reply, err := client.GetCave(context.Background(), request)
+		if err != nil {
+			fmt.Printf("Add cave: %v\n", err)
+			return
+		}
+		fmt.Printf("%v\n", reply)
 	},
 }
