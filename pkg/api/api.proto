@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package api;
+
+message Cave {
+    string title = 1;
+    string countryName = 2;
+    string regionName = 3;
+    float longitude = 4;
+    float latitude = 5;
+}
+
+message AddCaveRequest {
+    Cave cave = 1;
+}
+
+message AddCaveReply {
+}
+
+message GetCaveRequest {
+    string title = 1;
+}
+
+message GetCaveReply {
+    Cave cave = 1;
+}
+
+service CaveConditions {
+    rpc AddCave (AddCaveRequest) returns (AddCaveReply) {}
+    rpc GetCave (GetCaveRequest) returns (GetCaveReply) {}
+}
