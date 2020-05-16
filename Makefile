@@ -16,9 +16,9 @@ proto:
 	protoc --go_out=plugins=grpc:. ./pkg/api/api.proto
 
 db_up:
-	export POSTGRESQL_URL='postgres://postgres:123456@192.168.0.3:5432/cave_conditions?sslmode=disable'
+	export POSTGRESQL_URL='postgres://postgres:123456@192.168.0.4:5432/cave_conditions?sslmode=disable'
 	migrate -database ${POSTGRESQL_URL} -path db/migrations up
 
 db_down:
-	export POSTGRESQL_URL='postgres://postgres:123456@192.168.0.3:5432/cave_conditions?sslmode=disable'
+	export POSTGRESQL_URL='postgres://postgres:123456@192.168.0.4:5432/cave_conditions?sslmode=disable'
 	migrate -database ${POSTGRESQL_URL} -path db/migrations down

@@ -6,13 +6,13 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// server fields
-type serverStruct struct {
+// ServerStruct for server fields
+type ServerStruct struct {
 	ListenAddr string `yaml:"listen_addr"`
 }
 
-// db fields
-type dbStruct struct {
+// DBStruct for db fields
+type DBStruct struct {
 	Host   string `yaml:"host"`
 	Port   string `yaml:"port"`
 	User   string `yaml:"user"`
@@ -20,8 +20,8 @@ type dbStruct struct {
 	Name   string `yaml:"name"`
 }
 
-// log fields
-type logStruct struct {
+// LogStruct for log fields
+type LogStruct struct {
 	OutputLevel        string `yaml:"output_level"`
 	OutputPath         string `yaml:"output_path"`
 	RotationPath       string `yaml:"rotation_path"`
@@ -33,9 +33,9 @@ type logStruct struct {
 
 // Config structure for server
 type Config struct {
-	Server serverStruct `yaml:"server"`
-	DB     dbStruct     `yaml:"postgres"`
-	Log    logStruct    `yaml:"log"`
+	Server ServerStruct `yaml:"server"`
+	DB     DBStruct     `yaml:"postgres"`
+	Log    LogStruct    `yaml:"log"`
 }
 
 // ParseYamlFile the config file
