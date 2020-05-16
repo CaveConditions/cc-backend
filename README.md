@@ -1,3 +1,7 @@
+# CaveConditions Backend
+
+This is WIP for https://www.caveconditions.com. This part will become the backend service based on Go, GRPC and Postgres
+
 ### migrate the database
 
 $ vim Makefile
