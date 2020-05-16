@@ -7,7 +7,7 @@ default: build
 all: build install proto db_up db_down
 
 build:
-	$(GOBUILD) -o CaveConditions main.go
+	$(GOBUILD) -o cc-backend main.go
 
 install:
 	$(GOINSTALL)
@@ -16,7 +16,7 @@ proto:
 	protoc --go_out=plugins=grpc:. ./pkg/api/api.proto
 
 db_up:
-	export POSTGRESQL_URL='postgres://postgres:123456@192.168.0.4:5432/cave_conditions?sslmode=disable'
+	export POSTGRESQL_URL='postgres://postgres:123456@127.0.0.1:5432/chris?sslmode=disable'
 	migrate -database ${POSTGRESQL_URL} -path db/migrations up
 
 db_down:

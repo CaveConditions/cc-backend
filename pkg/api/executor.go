@@ -1,12 +1,16 @@
 package api
 
 import (
-	"CaveConditions/pkg/config"
-	"CaveConditions/pkg/db"
-	"CaveConditions/pkg/db/model"
-	"CaveConditions/pkg/log"
 	context "context"
 	"time"
+
+	"github.com/caveconditions/cc-backend/pkg/log"
+
+	"github.com/caveconditions/cc-backend/pkg/db"
+
+	"github.com/caveconditions/cc-backend/pkg/db/model"
+
+	"github.com/caveconditions/cc-backend/pkg/config"
 
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -39,18 +43,58 @@ func (e *apiExecutor) close() {
 	}
 }
 
-// AddCave - check if the cave is existed, if not, add the cave to database
-func (e *apiExecutor) AddCave(ctx context.Context, request *AddCaveRequest) (*AddCaveReply, error) {
-	if request.Cave.Title == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "Cave title is empty")
+func checkCaveRequest(request *AddCaveRequest) error {
+	if len(request.Cave.Title) > 100 {
+		return status.Error(codes.InvalidArgument, "Title should be max. 100 characters long")
 	}
-	// check if the cave is existed
+
+	if request.Cave.Title == "" {
+		return status.Errorf(codes.InvalidArgument, "Cave title is empty")
+	}
+
+	if request.Cave.Latitude < -90 {
+		return status.Errorf(codes.InvalidArgument, "Latitude has to be between -90 and 90")
+	}
+
+	if request.Cave.Latitude > 90 {
+		return status.Errorf(codes.InvalidArgument, "Latitude has to be between -90 and 90")
+	}
+
+	if request.Cave.Longitude < -180 {
+		return status.Errorf(codes.InvalidArgument, "Longitude has to be between -180 and 180")
+	}
+
+	if request.Cave.Longitude > 180 {
+		return status.Errorf(codes.InvalidArgument, "Longitude has to be between -180 and 180")
+	}
+
+	if request.Cave.Latitude != 0 && request.Cave.Longitude == 0 {
+		return status.Errorf(codes.InvalidArgument, "If latitude is provided, then longitude has to be provided as well")
+	}
+
+	if request.Cave.Longitude != 0 && request.Cave.Latitude == 0 {
+		return status.Errorf(codes.InvalidArgument, "If longitude is provided, then latitude has to be provided as well")
+	}
+
+	return nil
+}
+
+// AddCave - check if the cave is existing, if not, add the cave to database
+func (e *apiExecutor) AddCave(ctx context.Context, request *AddCaveRequest) (*AddCaveReply, error) {
+
+	err := checkCaveRequest(request)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// check if the cave is existing
 	cave, err := e.handler.FindCaveByUK(request.Cave.Title)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Find cave: %v", err)
 	}
 	if cave != nil {
-		return nil, status.Errorf(codes.AlreadyExists, "Cave is existed")
+		return nil, status.Errorf(codes.AlreadyExists, "Cave is existing")
 	}
 
 	cave = &model.Cave{

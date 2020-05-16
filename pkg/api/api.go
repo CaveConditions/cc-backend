@@ -1,11 +1,12 @@
 package api
 
 import (
-	"CaveConditions/pkg/config"
-	"CaveConditions/pkg/log"
 	"net"
 	"sync"
 	"time"
+
+	"github.com/caveconditions/cc-backend/pkg/config"
+	"github.com/caveconditions/cc-backend/pkg/log"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"

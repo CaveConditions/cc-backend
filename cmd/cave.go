@@ -1,9 +1,10 @@
 package cmd
 
 import (
-	"CaveConditions/pkg/api"
 	"context"
 	"fmt"
+
+	"github.com/caveconditions/cc-backend/pkg/api"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"

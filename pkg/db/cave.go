@@ -1,7 +1,7 @@
 package db
 
 import (
-	"CaveConditions/pkg/db/model"
+	"github.com/caveconditions/cc-backend/pkg/db/model"
 
 	"github.com/jinzhu/gorm"
 )
@@ -31,4 +31,10 @@ func (s *Handler) FindCaveByUK(title string) (*model.Cave, error) {
 // CreateCave insert the cave into database
 func (s *Handler) CreateCave(u *model.Cave) error {
 	return s.db.Table(TabelCave).Create(u).Error
+}
+
+func (s *Handler) DeleteCaves() error {
+	s.db.Delete(model.Cave{})
+
+	return nil
 }

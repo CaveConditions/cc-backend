@@ -1,11 +1,12 @@
 package log
 
 import (
-	"CaveConditions/pkg/log/lumberjack"
 	"fmt"
 	"strings"
 	"sync/atomic"
 	"time"
+
+	"github.com/caveconditions/cc-backend/pkg/log/lumberjack"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

@@ -4,9 +4,9 @@ server:
 postgres:
   user: "postgres" # the username for database
   passwd: "123456" # the passwd for database
-  host: "192.168.0.4" # the host for database
+  host: "127.0.0.1" # the host for database
   port: "5432" # the port for database
-  name: "cave_conditions" # the database name
+  name: "chris" # the database name
 
 log:
   output_level: "info" # the log level with value in [debug, info, warn, error]

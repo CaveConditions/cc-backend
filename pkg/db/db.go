@@ -1,8 +1,9 @@
 package db
 
 import (
-	"CaveConditions/pkg/config"
 	"fmt"
+
+	"github.com/caveconditions/cc-backend/pkg/config"
 
 	"github.com/jinzhu/gorm"
 )

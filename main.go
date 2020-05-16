@@ -1,7 +1,7 @@
 package main
 
 import (
-	"CaveConditions/cmd"
+	"github.com/caveconditions/cc-backend/cmd"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )

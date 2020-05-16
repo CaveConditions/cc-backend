@@ -1,14 +1,17 @@
 package cmd
 
 import (
-	"CaveConditions/pkg/api"
-	"CaveConditions/pkg/config"
-	"CaveConditions/pkg/log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/caveconditions/cc-backend/pkg/log"
+
+	"github.com/caveconditions/cc-backend/pkg/config"
+
+	"github.com/caveconditions/cc-backend/pkg/api"
 
 	"github.com/spf13/cobra"
 )
