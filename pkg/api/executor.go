@@ -2,7 +2,6 @@ package api
 
 import (
 	context "context"
-	"time"
 
 	"github.com/caveconditions/cc-backend/pkg/log"
 
@@ -88,23 +87,12 @@ func (e *apiExecutor) AddCave(ctx context.Context, request *AddCaveRequest) (*Ad
 		return nil, err
 	}
 
-	// check if the cave is existing
-	cave, err := e.handler.FindCaveByUK(request.Cave.Title)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Find cave: %v", err)
-	}
-	if cave != nil {
-		return nil, status.Errorf(codes.AlreadyExists, "Cave is existing")
-	}
-
-	cave = &model.Cave{
+	cave := &model.Cave{
 		Title:       request.Cave.Title,
 		CountryName: request.Cave.CountryName,
 		RegionName:  request.Cave.RegionName,
 		Longitude:   request.Cave.Longitude,
 		Latitude:    request.Cave.Latitude,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
 	}
 	// insert the cave to database
 	if err := e.handler.CreateCave(cave); err != nil {

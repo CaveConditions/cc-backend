@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS caves
    region_name VARCHAR(20) NOT NULL,
    created_at TIMESTAMP NOT NULL,
    updated_at TIMESTAMP NOT NULL,
+   deleted_at TIMESTAMP,
    longitude FLOAT NOT NULL,
    latitude FLOAT NOT NULL
 );

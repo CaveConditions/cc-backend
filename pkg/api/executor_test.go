@@ -9,31 +9,32 @@ import (
 
 	"github.com/caveconditions/cc-backend/pkg/config"
 	"github.com/caveconditions/cc-backend/pkg/db"
+	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	. "github.com/smartystreets/goconvey/convey"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
+	"gopkg.in/DATA-DOG/go-sqlmock.v2"
 )
 
 const bufSize = 1024 * 1024
 
 var lis *bufconn.Listener
 
-func init() {
+func registerServer() sqlmock.Sqlmock {
 	lis = bufconn.Listen(bufSize)
 	s := grpc.NewServer()
 
-	settings := &config.Config{
-		DB: config.DBStruct{
-			Host:   "127.0.0.1",
-			Port:   "5432",
-			Name:   "chris",
-			User:   "postgres",
-			Passwd: "123456",
-		},
+	settings := &config.Config{}
+	e := &apiExecutor{
+		settings: settings,
 	}
-	e := newAPIExecutor(settings)
-	e.handler.DeleteCaves()
+
+	// init the database handler
+	dbb, mock, _ := sqlmock.New()
+	dbh, _ := gorm.Open("postgres", dbb)
+	dbh.LogMode(true)
+	e.handler = db.NewMockHandler(settings, dbh)
 
 	RegisterCaveConditionsServer(s, e)
 	go func() {
@@ -41,20 +42,8 @@ func init() {
 			log.Fatalf("Server exited with error: %v", err)
 		}
 	}()
-}
 
-func resetDb() {
-	settings := &config.Config{
-		DB: config.DBStruct{
-			Host:   "127.0.0.1",
-			Port:   "5432",
-			Name:   "chris",
-			User:   "postgres",
-			Passwd: "123456",
-		},
-	}
-
-	db.NewHandler(settings).DeleteCaves()
+	return mock
 }
 
 func bufDialer(context.Context, string) (net.Conn, error) {
@@ -62,6 +51,7 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 }
 
 func TestAddCave(t *testing.T) {
+	mock := registerServer()
 	ctx := context.Background()
 	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
 	if err != nil {
@@ -94,41 +84,25 @@ func TestAddCave(t *testing.T) {
 		})
 
 		Convey("Returns correct title", func() {
-			resetDb()
 			request := AddCaveRequest{
 				Cave: &Cave{
 					Title: "Test Cave",
 				},
 			}
+			mock.ExpectBegin()
+			mock.ExpectQuery(`^INSERT INTO "caves" (.+) RETURNING`).
+				WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), request.Cave.Title, "", "", 0.0, 0.0).
+				WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
+			mock.ExpectCommit()
 
 			_, err := client.AddCave(ctx, &request)
 			So(err, ShouldBeNil)
 
-			grequest := GetCaveRequest{
-				Title: "Test Cave",
-			}
-
-			reply, _ := client.GetCave(context.Background(), &grequest)
-			So(reply.Cave.Title, ShouldEqual, "Test Cave")
 		})
 
-		Convey("Fail if cave already exists", func() {
-			resetDb()
-			request := AddCaveRequest{
-				Cave: &Cave{
-					Title: "Test Cave",
-				},
-			}
-
-			client.AddCave(ctx, &request)
-			_, err := client.AddCave(ctx, &request)
-			So(err, ShouldNotBeNil)
-
-		})
 	})
 
 	Convey("For latitude", t, func() {
-		resetDb()
 
 		Convey("Return error on latitude < -90", func() {
 			request := AddCaveRequest{
@@ -169,7 +143,6 @@ func TestAddCave(t *testing.T) {
 	})
 
 	Convey("For longitude", t, func() {
-		resetDb()
 
 		Convey("Return error on longitude < -180", func() {
 			request := AddCaveRequest{

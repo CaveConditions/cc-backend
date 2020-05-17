@@ -14,5 +14,6 @@ require (
 	golang.org/x/tools v0.0.0-20200515220128-d3bf790afa53 // indirect
 	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.23.0
+	gopkg.in/DATA-DOG/go-sqlmock.v2 v2.0.0-20180914054222-c19298f520d0
 	gopkg.in/yaml.v2 v2.3.0
 )

@@ -21,6 +21,12 @@ type Handler struct {
 	db       *gorm.DB       // postgres database object
 }
 
+func NewMockHandler(settings *config.Config, db *gorm.DB) *Handler {
+	s := &Handler{settings: settings, db: db}
+
+	return s
+}
+
 // NewHandler returns a new database operation handler
 func NewHandler(settings *config.Config) *Handler {
 	s := &Handler{settings: settings}
